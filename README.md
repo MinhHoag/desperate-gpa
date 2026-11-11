@@ -2,7 +2,7 @@
 
 **All-locally stored · AI compile material · Open source**
 
-A browser quiz game that turns your notes into timed runs. Answer quickly, build a combo, and reach the boss wave before you lose all three shields.
+A browser quiz game that turns your notes into timed runs. Answer quickly, build a combo, and reach the boss wave before you lose all three shields. Try it out at https://minhhoag.github.io/desperate-gpa/
 
 ![An Easy Math run showing the question timer, four answer choices, score, combo, and Tuz](assets/gameplay.png)
 
