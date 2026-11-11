@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Your GPA Must Be Desperate</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body><main>
+<header class="arcade-head"><div><h1>Your GPA Must Be Desperate</h1><p>Upload your notes. Let your agent build the deck. Chain your combos.</p></div></header>
+<div class="row toolbar"><div class="toolbar-picker"><label for="level">Deck</label><select class="section" id="level"></select></div><div class="toolbar-controls"><button type="button" id="add-material" aria-haspopup="dialog">Add material</button><button type="button" id="option-motion" aria-pressed="false">Gentler options</button><button type="button" id="sound" aria-pressed="true">SFX on</button><button type="button" id="configure-ai" aria-haspopup="dialog">Configure AI</button><button type="button" id="stop-run" hidden title="End this run (Esc)">Stop run</button></div></div>
+<div class="hud">
+<div class="stat"><span class="label">Wave</span><span id="wave-count" class="stat-value">0 / 5</span></div>
+<div class="stat"><span class="label">Points</span><span class="score-box"><span id="score" aria-label="0 points">0</span><span class="score-unit" aria-hidden="true">PTS</span><span class="score-gain" id="score-gain" aria-hidden="true"></span></span></div>
+<div class="stat"><span class="label">Combo</span><span class="combo-box"><span id="combo" data-tier="1">×1</span></span><span id="chain-count" class="chain-count"></span></div>
+<div class="stat"><span class="label">Best</span><span id="best" class="best stat-value">0</span></div>
+</div>
+<div class="meter" id="meter" role="timer" aria-label="Time remaining"><div id="fill"></div></div>
+<div class="game-grid">
+<section class="arena" id="arena" aria-label="Quiz arena">
+<svg class="wave" viewBox="0 0 800 200" preserveAspectRatio="none" aria-hidden="true"><path id="trace" fill="none" stroke="#397b67" stroke-width="2.5"/><path id="trace-two" fill="none" stroke="#ad7f23" stroke-width="1.8"/></svg>
+<div class="prompt">
+<div class="question-top"><p class="label" id="deck-context"></p></div>
+<h2 id="question">Ready to play?</h2>
+</div>
+<div id="targets" class="targets"></div>
+<div class="ready-panel" id="ready-panel">
+<div class="attract-screen" aria-hidden="true">
+<svg viewBox="0 20 800 160" preserveAspectRatio="none">
+<defs><pattern id="scope-grid" width="24" height="20" patternUnits="userSpaceOnUse"><path d="M24 0H0V20" fill="none" stroke="#729d86" stroke-width="1"/></pattern></defs>
+<rect class="scope-grid" y="20" width="800" height="160" fill="url(#scope-grid)"/>
+<path d="M0 100H800" fill="none" stroke="#759987" stroke-width="1"/>
+<path id="attract-trace" fill="none" stroke="#2c7661" stroke-width="2.8"/>
+<path id="attract-echo" class="scope-path" fill="none" stroke="#a67728" stroke-width="1.9"/>
+</svg>
+</div>
+<p>Pick the right answer before time runs out.</p>
+<div class="rule-grid">
+<div class="rule"><strong>5 waves</strong>Four questions, then a boss.</div>
+<div class="rule"><strong>3 shields</strong>A miss takes one shield.</div>
+<div class="rule"><strong>2× boss</strong>Bank the combo on the last hit.</div>
+</div>
+</div>
+<div class="rush-status">
+<div class="feedback-lane">
+<p class="flash" id="feedback" aria-live="polite">Five waves. Three shields. One boss.</p>
+<div class="shield-badge" id="shield-badge"><span class="label" aria-hidden="true">Shields</span><span id="shields" aria-label="3 shields">◆◆◆</span></div>
+</div>
+
+</div>
+<div class="row run-actions"><button id="start" class="primary" type="button">Start run</button><button id="next-level" class="primary" type="button" hidden>Next run →</button><button id="next-wave" type="button" hidden>Next wave →</button></div>
+</section>
+<aside class="run-map" aria-labelledby="map-title">
+<p class="label">Run tracker</p><h2 id="map-title">Wave map</h2>
+<ol class="map-list" id="wave-map"></ol>
+<div class="key-guide"><p><kbd>1–4</kbd> Hit a target</p><p><kbd>Space</kbd> Skip feedback</p><p><kbd>Esc</kbd> Stop run</p></div>
+</aside>
+</div>
+<section id="result" class="finish" hidden aria-live="polite"><h2 id="result-title"></h2><p id="result-detail"></p><h3 id="review-heading" hidden>Missed questions</h3><ol id="review" aria-labelledby="review-heading"></ol></section>
+
+</main>
+<div class="tuz-lane">
+<aside class="tuz-chat" id="tuz-chat" aria-label="Tuz chat">
+<button type="button" class="pet-wrap" id="pet-wrap" data-mood="idle" aria-label="Tuz. Drag or use arrow keys to move him." title="Drag Tuz"><img class="pet" id="rush-pet" src="assets/Tuz_Still.png" alt="" draggable="false"><span class="emote" id="emote" aria-hidden="true" hidden></span></button>
+<div class="chat-bubble"><span class="label">Tuz</span><p class="taunt" id="taunt"></p></div>
+</aside>
+</div>
+<dialog id="deck-picker" aria-labelledby="deck-picker-title">
+  <div class="picker-head"><h2 id="deck-picker-title">Choose your deck</h2><button type="button" id="picker-close">Close</button></div>
+  <label for="deck-search">Find a deck</label>
+  <input id="deck-search" type="search" placeholder="Search decks…" autocomplete="off">
+  <div id="deck-picker-list"></div>
+</dialog>
+<dialog id="deck-editor" aria-labelledby="edit-deck-title">
+  <form id="edit-deck-form">
+    <h2 id="edit-deck-title">Your deck</h2>
+    <select id="edit-card" hidden aria-hidden="true" tabindex="-1"></select>
+    <div class="editor-layout">
+    <div id="edit-card-grid" class="edit-card-grid" aria-label="Choose a question"></div>
+    <div class="editor-fields">
+    <div class="edit-navigation">
+      <p id="edit-position" aria-live="polite"></p>
+      <button type="button" id="edit-prev">Previous</button>
+      <button type="button" id="edit-next">Next</button>
+    </div>
+    <label>Question <textarea id="edit-prompt" required maxlength="255"></textarea></label>
+    <fieldset><legend>Answer choices</legend><p>Select the circle beside the correct answer.</p><div id="edit-choices"></div></fieldset>
+    <label>Explanation <textarea id="edit-why" required maxlength="650"></textarea></label>
+    <p id="edit-status" role="status"></p>
+    <div class="material-actions"><button type="button" id="edit-close">Close</button><button type="button" id="edit-remove">Delete question</button><button type="submit">Save question</button></div>
+    </div></div>
+  </form>
+</dialog>
+<dialog id="material-panel" aria-labelledby="material-title">
+  <form id="material-form">
+    <h2 id="material-title">Bring your material to the table.</h2>
+    <label>Deck name <input id="material-name" maxlength="70" placeholder="Example: Biology · Cell structure" required></label>
+    <label class="file-drop" id="material-drop"><span class="upload-symbol" aria-hidden="true">↥</span><strong>Drop your material here</strong><span>or click to choose · PDF / TXT / MD</span><input type="file" id="material-file" accept=".pdf,.txt,.md"><span id="material-filename"></span></label>
+    <label>Paste or edit your study material <textarea id="material-text" placeholder="Paste notes, term: definition lines, or Q: / A: pairs."></textarea></label>
+    <fieldset id="material-mode">
+      <legend>Build questions with</legend>
+      <label><input type="radio" name="build-mode" value="local" checked><span><strong>Local builder</strong><small>Build questions in your browser.</small></span></label>
+      <label><input type="radio" name="build-mode" value="agent"><span><strong>Connected AI</strong><small>Generate with your linked model.</small></span></label>
+      <label><input type="radio" name="build-mode" value="manual"><span><strong>Manual AI chat</strong><small>Copy a prompt and import the reply.</small></span></label>
+    </fieldset>
+    <small id="local-material-note">Tuz makes definition and fill-in-the-blank questions locally. Use a text-based PDF or paste notes from scanned pages.</small>
+    <div id="agent-settings" hidden>
+      <p id="agent-summary"></p>
+      <button type="button" id="configure-from-material">Configure AI</button>
+      <small>Your material is sent to the selected provider when you choose Generate questions.</small>
+    </div>
+    <div id="manual-settings" hidden>
+      <p>Copy the prompt into the agent you already use, then paste its JSON reply below.</p>
+      <button type="button" id="copy-agent-prompt">Copy agent prompt</button>
+      <label id="manual-prompt-field" hidden>Prompt to copy <textarea id="manual-prompt" readonly></textarea></label>
+      <label>Agent JSON reply <textarea id="agent-reply" placeholder='{"cards":[…]}'></textarea></label>
+    </div>
+    <p id="material-status" role="status"></p>
+    <div class="material-actions"><button type="button" id="material-close">Cancel</button><button type="submit" id="material-build" class="material-primary">Make deck</button></div>
+  </form>
+</dialog>
+<dialog id="ai-panel" aria-labelledby="ai-title">
+  <form id="ai-form">
+    <h2 id="ai-title">Configure AI</h2>
+    <p id="agent-launch" hidden>Browser connection. Enter your model and API key below. Your provider must allow requests from this page.</p>
+    <div id="ai-fields">
+      <label id="agent-profile-field" hidden>Saved connection <select id="agent-profile"></select></label>
+      <label>Provider
+        <select id="agent-provider">
+          <option value="ollama">Ollama (local)</option>
+          <option value="openai">OpenAI</option>
+          <option value="anthropic">Anthropic</option>
+          <option value="gemini">Google Gemini</option>
+          <option value="openrouter">OpenRouter</option>
+          <option value="custom">Custom endpoint</option>
+        </select>
+      </label>
+      <button type="button" id="agent-custom">Add a custom connection</button>
+      <div id="ai-custom-fields" hidden>
+        <label>Format <select id="agent-format"><option value="chat">OpenAI-compatible chat</option><option value="webhook">Agent webhook</option></select></label>
+        <label>Endpoint URL <input id="agent-url" type="url" placeholder="https://example.com/v1/chat/completions"></label>
+      </div>
+      <label id="agent-model-field">Model ID <input id="agent-model" maxlength="160" autocomplete="off"></label>
+      <label id="agent-token-field">API key <input id="agent-token" type="password" maxlength="4096" autocomplete="off"></label>
+      <small>Connection settings stay in this browser. API keys are kept only until you reload or close this tab.</small>
+    </div>
+    <p id="ai-status" role="status" hidden></p>
+    <div class="material-actions">
+      <button type="button" id="ai-close">Close</button>
+      <button type="button" id="agent-manual">Use an AI chat manually</button>
+      <button type="submit" id="agent-save" class="material-primary">Use connection</button>
+    </div>
+  </form>
+</dialog>
+<script src="vendor/gsap.min.js"></script>
+<script src="materials.js"></script>
+<script src="demo-decks.js"></script>
+<script src="game.js"></script></body></html>

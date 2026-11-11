@@ -1,0 +1,53 @@
+const demoDecks = [{
+  title: 'Easy Math',
+  cards: [
+    {prompt:'What is 8 + 7?', options:['15','14','16','17'], answer:'15', why:'Add 2 to 8 to make 10, then add the remaining 5.'},
+    {prompt:'What is 24 − 9?', options:['13','15','16','17'], answer:'15', why:'Subtract 10 to get 14, then add 1 back.'},
+    {prompt:'What is 6 × 4?', options:['18','20','24','28'], answer:'24', why:'Four groups of six make 6 + 6 + 6 + 6 = 24.'},
+    {prompt:'What is 36 ÷ 6?', options:['4','5','6','7'], answer:'6', why:'Six groups of six make 36.'},
+    {prompt:'Which is equal to 1/2?', options:['1/4','2/3','2/4','3/4'], answer:'2/4', why:'Multiply both the top and bottom of 1/2 by 2 to get 2/4.'},
+    {prompt:'What is one quarter of 20?', options:['4','5','8','10'], answer:'5', why:'One quarter means one of four equal parts. 20 ÷ 4 = 5.'},
+    {prompt:'What is 10% of 70?', options:['0.7','7','10','63'], answer:'7', why:'Ten percent is one tenth. Divide 70 by 10.'},
+    {prompt:'How many cents make $2.50?', options:['25','205','250','2,500'], answer:'250', why:'Two dollars are 200 cents. Add the remaining 50 cents.'},
+    {prompt:'Solve x + 5 = 12.', options:['5','6','7','17'], answer:'7', why:'Subtract 5 from both sides of the equation.'},
+    {prompt:'What is 2 + 3 × 4?', options:['11','14','20','24'], answer:'14', why:'Multiply first. 3 × 4 = 12, then add 2.'},
+    {prompt:'Which number is largest?', options:['0.2','0.25','0.5','0.05'], answer:'0.5', why:'Write them as 0.20, 0.25, 0.50, and 0.05. Fifty hundredths is the largest.'},
+    {prompt:'A rectangle is 5 cm long and 3 cm wide. What is its area?', options:['8 cm²','15 cm²','16 cm²','25 cm²'], answer:'15 cm²', why:'The area of a rectangle is length times width. 5 × 3 = 15.'},
+  ],
+}, {
+  title: 'Everyday Science',
+  cards: [
+    {prompt:'Why does a metal spoon warm up in hot soup?', options:['Heat moves through the metal','The metal makes heat','The spoon absorbs light','The metal stops heat moving'], answer:'Heat moves through the metal', why:'Heat travels from the hotter soup through the cooler metal by conduction.'},
+    {prompt:'What force slows a book sliding across a desk?', options:['Magnetism','Friction','Gravity','Buoyancy'], answer:'Friction', why:'Friction acts against motion between surfaces in contact.'},
+    {prompt:'What happens to water when it evaporates?', options:['It becomes a gas','It becomes a solid','It becomes heavier','It becomes a different substance'], answer:'It becomes a gas', why:'Water molecules leave the liquid and enter the air as water vapor.'},
+    {prompt:'Which material conducts electricity best?', options:['Rubber','Glass','Dry wood','Copper'], answer:'Copper', why:'Copper has mobile electrons that carry electric current.'},
+    {prompt:'Why do we see the Moon?', options:['It reflects sunlight','It burns fuel','It makes its own visible light','It reflects light from nearby stars'], answer:'It reflects sunlight', why:'Sunlight bounces off the Moon’s surface and reaches our eyes.'},
+    {prompt:'Why does a ball dropped from rest speed up as it falls?', options:['Gravity pulls it downward','Its mass increases','Air pushes it downward','Friction adds energy'], answer:'Gravity pulls it downward', why:'Earth’s gravity gives the ball a downward acceleration.'},
+    {prompt:'Which travels through empty space?', options:['Sound','A ripple in water','Light','A wave on a rope'], answer:'Light', why:'Light can travel in a vacuum. Sound and the other examples need matter to carry them.'},
+    {prompt:'Why does ice float in liquid water?', options:['Ice is less dense than water','Ice has no mass','Ice is colder than water','Ice pushes water away without displacing it'], answer:'Ice is less dense than water', why:'A given volume of ice has less mass than the same volume of liquid water.'},
+  ],
+}, {
+  title: 'English Essentials',
+  cards: [
+    {prompt:'In “The fox quietly ran home,” which word tells how it ran?', options:['fox','quietly','ran','home'], answer:'quietly', why:'Quietly is an adverb that describes how the fox ran.'},
+    {prompt:'Choose the possessive form for a backpack that belongs to one student.', options:['students backpack','students’ backpack','student’s backpack','student backpack’s'], answer:'student’s backpack', why:'Add an apostrophe and s to the singular owner, student.'},
+    {prompt:'Which word completes “___ waiting outside” to mean “They are waiting outside”?', options:['Their','There','They’re','Theirs'], answer:'They’re', why:'They’re is the contraction of they are.'},
+    {prompt:'Which sentence is in the past tense?', options:['We walk home.','We will walk home.','We are walking home.','We walked home.'], answer:'We walked home.', why:'Walked describes an action that happened in the past.'},
+    {prompt:'Which word is closest in meaning to “brief”?', options:['Short','Slow','Bright','Loud'], answer:'Short', why:'Brief describes something that lasts a short time or uses few words.'},
+    {prompt:'Which sentence contains a simile?', options:['The room was silent.','Her smile was sunshine.','The wind whispered.','The lake shone like glass.'], answer:'The lake shone like glass.', why:'A simile compares things using words such as like or as.'},
+    {prompt:'Which revision fixes “The dogs runs fast”?', options:['The dogs run fast.','The dogs running fast.','The dogs is fast.','The dogs was fast.'], answer:'The dogs run fast.', why:'The plural subject dogs takes the verb run.'},
+    {prompt:'In “Because it rained, we stayed inside,” what is the cause?', options:['We stayed inside','It rained','We went outside','The rain stopped'], answer:'It rained', why:'Because introduces the reason we stayed inside.'},
+  ],
+}, {
+  title: 'World Geography',
+  cards: [
+    {prompt:'What does the equator divide Earth into?', options:['Northern and Southern Hemispheres','Eastern and Western Hemispheres','Land and oceans','Time zones'], answer:'Northern and Southern Hemispheres', why:'The equator is at 0° latitude, halfway between the poles.'},
+    {prompt:'Which is Earth’s largest ocean?', options:['Atlantic','Pacific','Indian','Arctic'], answer:'Pacific', why:'The Pacific Ocean covers the largest area.'},
+    {prompt:'Which continent contains the Sahara Desert?', options:['Asia','South America','Africa','Europe'], answer:'Africa', why:'The Sahara stretches across northern Africa.'},
+    {prompt:'What does latitude measure?', options:['Distance north or south of the equator in degrees','Distance east or west of the prime meridian in degrees','Height above sea level','Distance between two cities in kilometers'], answer:'Distance north or south of the equator in degrees', why:'Latitude runs from 0° at the equator to 90° at either pole.'},
+    {prompt:'What is a peninsula?', options:['Land completely surrounded by water','A body of water surrounded by land','Land surrounded by water on most sides','A narrow river'], answer:'Land surrounded by water on most sides', why:'A peninsula projects into water while remaining connected to a larger land area.'},
+    {prompt:'Which map feature explains what its symbols mean?', options:['Scale','Legend','Compass rose','Border'], answer:'Legend', why:'The legend, also called a key, identifies the meaning of symbols on a map.'},
+    {prompt:'What separates the North and South Poles on a globe?', options:['90° of longitude','180° of longitude','90° of latitude','180° of latitude'], answer:'180° of latitude', why:'The poles are at 90° north and 90° south. The difference is 180°.'},
+    {prompt:'On a map, 1 cm represents 5 km. What does 4 cm represent?', options:['5 km','9 km','20 km','40 km'], answer:'20 km', why:'Multiply the map distance by the scale. 4 × 5 km = 20 km.'},
+  ],
+}];
