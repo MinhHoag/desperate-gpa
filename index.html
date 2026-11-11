@@ -49,7 +49,7 @@
 <aside class="run-map" aria-labelledby="map-title">
 <p class="label">Run tracker</p><h2 id="map-title">Wave map</h2>
 <ol class="map-list" id="wave-map"></ol>
-<div class="key-guide"><p><kbd>1–4</kbd> Hit a target</p><p><kbd>Space</kbd> Skip feedback</p><p><kbd>Esc</kbd> Stop run</p></div>
+<div class="key-guide"><p><kbd>1–4</kbd> Hit a target</p><p><kbd>Space</kbd> Skip feedback</p><p><kbd>Esc</kbd> Stop run</p><p><kbd>R</kbd> Start or retry</p></div>
 </aside>
 </div>
 <section id="result" class="finish" hidden aria-live="polite"><h2 id="result-title"></h2><p id="result-detail"></p><h3 id="review-heading" hidden>Missed questions</h3><ol id="review" aria-labelledby="review-heading"></ol></section>
@@ -84,6 +84,7 @@
     <label>Explanation <textarea id="edit-why" required maxlength="650"></textarea></label>
     <p id="edit-status" role="status"></p>
     <div class="material-actions"><button type="button" id="edit-close">Close</button><button type="button" id="edit-remove">Delete question</button><button type="submit">Save question</button></div>
+    <button type="button" id="delete-deck">Remove deck</button>
     </div></div>
   </form>
 </dialog>
@@ -107,7 +108,7 @@
     </div>
     <div id="manual-settings" hidden>
       <p>Copy the prompt into the agent you already use, then paste its JSON reply below.</p>
-      <button type="button" id="copy-agent-prompt">Copy agent prompt</button>
+      <div class="prompt-copy-row"><button type="button" id="copy-agent-prompt">Copy agent prompt</button><span id="copy-toast" role="status" aria-live="polite" hidden>Copied</span></div>
       <label id="manual-prompt-field" hidden>Prompt to copy <textarea id="manual-prompt" readonly></textarea></label>
       <label>Agent JSON reply <textarea id="agent-reply" placeholder='{"cards":[…]}'></textarea></label>
     </div>

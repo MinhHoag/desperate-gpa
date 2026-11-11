@@ -352,12 +352,16 @@ button:focus-visible,select:focus-visible{outline:2px solid #edc078;outline-offs
 }
 #material-form #material-mode input{width:16px;height:16px;margin:2px 0 0;padding:0;accent-color:#d0ab70;cursor:pointer}
 #material-mode strong,#material-mode small{display:block}
+#material-form #material-mode strong{font-weight:550}
+#material-form #material-mode label{font-weight:400}
 #material-mode small{margin-top:3px;line-height:1.35}
 #material-form #material-mode label:hover{background:#2b3142}
 #material-form #material-mode label:has(input:checked){background:#39332e;border-color:#d0ab70}
 #material-mode label:has(input:focus-visible){outline:2px solid #dec185;outline-offset:2px}
 @media(max-width:520px){#material-mode{grid-template-columns:1fr;gap:6px}}
 .material-actions{gap:8px}
+.prompt-copy-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#copy-toast{padding:4px 8px;border:1px solid #8fae78;border-radius:4px;background:#30463f;color:#e6f0cf;font-size:.8rem;font-weight:500}
 .material-actions button,#agent-save,#copy-agent-prompt{background:#30463f;border:1px solid #687a63;border-radius:4px;box-shadow:0 3px 0 #11282a;color:#dddcc8;font-size:.83rem;font-weight:650}
 .material-actions .material-primary,#edit-deck-form button[type=submit]{background:#cda365;border-color:#dcb781;color:#222f2b;box-shadow:0 3px 0 #775b38}
 #agent-settings,#manual-settings{background:#292d3c;border:1px solid #555d70;border-radius:5px}
@@ -375,7 +379,8 @@ button:focus-visible,select:focus-visible{outline:2px solid #edc078;outline-offs
 .edit-question-card>span:last-child{font-size:.7rem;margin-top:auto;border-top:1px solid #c4bca5;width:100%;padding-top:9px;color:#6a6352}
 .edit-question-card[aria-pressed=true]{outline:2px solid #ecc986;outline-offset:3px;transform:translateY(-3px);box-shadow:0 5px 0 #ab8c52,0 8px 22px #dec07d30}
 .edit-question-card:hover{background:#fff3d9;transform:translateY(-3px)}
-#edit-remove{color:#e8aaa0;background:#4d3632;border-color:#80584c}
+#edit-remove,#delete-deck{color:#e8aaa0;background:#4d3632;border-color:#80584c}
+#delete-deck{justify-self:start}
 #edit-status{color:#c5c7ac;font-size:.78rem}
 @media(max-width:900px){.edit-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.editor-layout{grid-template-columns:1fr}.edit-card-grid{grid-template-columns:repeat(3,minmax(0,1fr));max-height:33dvh}.editor-fields{position:static}.edit-question-card{min-height:175px;gap:10px}.toolbar-controls{flex-wrap:wrap}.toolbar-picker{width:100%}}

@@ -1,35 +1,38 @@
 # Your GPA Must Be Desperate
 
-A browser quiz game. Pick a deck, answer before time runs out, and keep your streak through the boss wave. Play Easy Math, Everyday Science, English Essentials, or World Geography right away.
+**All-locally stored · AI compile material · Open source**
 
-## Run locally
+A browser quiz game that turns your notes into timed runs. Answer quickly, build a combo, and reach the boss wave before you lose all three shields.
 
-Open `index.html` to play, import material, or connect directly to an AI endpoint that allows browser requests (CORS). To use the local AI proxy, install Node.js 22 or newer, then run this command in the project folder.
+![An Easy Math run showing the question timer, four answer choices, score, combo, and Tuz](assets/gameplay.png)
 
-```sh
-npm start
-```
+## Play in your browser
 
-Open [the local game](http://127.0.0.1:8766/). Set `GPA_PORT` if you need a different port. The server listens on the loopback interface.
+Download or clone this repository, then open `index.html` in your browser. Pick **Easy Math**, **Everyday Science**, **English Essentials**, or **World Geography**, and select **Start run**.
 
-## Play and make decks
+| Key | Action |
+| --- | --- |
+| **1–4** | Pick an answer |
+| **Space** | Continue after feedback |
+| **Esc** | Stop the run and review missed questions |
+| **R** | Start or retry from the ready screen or results |
 
-- Choose a deck and select **Start run**. Press **1–4** to answer, **Space** to advance through feedback, or **R** to start or retry from the ready screen or results.
-- **Stop run** or **Esc** ends the attempt as a failed run and shows missed questions with their correct answers. Select **Retry run** to try the same deck again.
-- **Add material** accepts text-based PDFs, text files, Markdown, and pasted notes. The local question builder runs in the browser.
-- **Configure AI** lets you select Ollama, OpenAI, Anthropic, Google Gemini, OpenRouter, or a custom endpoint. Enter the provider's model ID and API key when required, then select **Use connection**. In **Add material**, choose **A connected agent** and select **Generate questions**.
-- **Edit deck** lets you revise imported questions, choices, and explanations. Mark the correct choice with its radio button.
+## Turn your notes into a deck
 
-In **Configure AI**, choose **Add a custom connection** to enter an OpenAI-compatible chat endpoint or a webhook that accepts `{"prompt":"..."}` and returns the deck JSON. Choose **Use an AI chat manually** to copy a prompt into a separate chat and import its reply.
+Select **Add material** and upload a text-based PDF, TXT, or Markdown file, or paste your notes. Choose how to build the questions.
 
-Decks, scores, and connection settings are saved in your browser. API keys stay in the current tab's memory. Using **Generate questions** sends the selected material to the provider you configured.
+- **Local builder** makes questions in your browser without an API key.
+- **Connected AI** sends your material to the model you select in **Configure AI**. Browser connections require an endpoint that allows browser requests (CORS).
+- **Manual AI chat** gives you a prompt to copy into an AI chat. Paste its JSON reply back into the game to import the deck.
 
-## Repository
+![Deck builder showing file upload, pasted notes, and the local and AI options](assets/deck-builder.png)
 
-Serve the repository root as a static site for the demo, local question builder, browser AI connections, and manual JSON import. The optional local AI proxy uses `server.mjs`.
+## Edit your deck
 
-- `index.html`, `styles.css`, and `game.js` contain the game interface and logic.
-- `demo-decks.js` contains the preset decks.
-- `materials.js` handles file imports, deck validation, and local deck storage.
-- `assets/` contains the Tuz mascot sprites.
-- `vendor/` contains the browser builds of PDF.js and GSAP, and the Instrument Serif font. The PDF.js and font license files are included. GSAP's notice is in its bundle. [GSAP license](https://gsap.com/standard-license/)
+Use **Edit deck** to revise questions, answer choices, and explanations before playing. The game stores decks, scores, and connection settings in your browser. API keys stay in memory until you reload or close the tab.
+
+![Deck editor showing the question cards and answer fields side by side](assets/deck-editor.png)
+
+## Third-party assets
+
+The `vendor/` folder includes PDF.js, GSAP, and Instrument Serif. The PDF.js and font licenses are included alongside the files. GSAP’s notice is in its bundle. [GSAP license](https://gsap.com/standard-license/)

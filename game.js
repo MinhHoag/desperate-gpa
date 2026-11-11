@@ -321,6 +321,35 @@ function canCloseEditor(){
 }
 byId('edit-close').onclick=()=>{if(canCloseEditor())deckEditor.close();};
 deckEditor.addEventListener('cancel',event=>{if(!canCloseEditor())event.preventDefault();});
+byId('delete-deck').onclick=()=>{
+  const deck=currentDeck();
+  if(!deck||!window.confirm('Remove “'+deck.title+'” and its best score?'))return;
+  const removed=level-customDeckStart;
+  const remaining=customDecks.filter((_,index)=>index!==removed);
+  if(!TuzMaterials.save(remaining)){
+    editStatus.textContent='Could not remove the deck. Browser storage is unavailable.';
+    return;
+  }
+  const lastId=customDecks.length;
+  for(const [entries,storageKey] of [[records,key],[lastOrders,orderKey]]){
+    for(let id=removed+1;id<lastId;id++){
+      if(Object.hasOwn(entries,id+1))entries[id]=entries[id+1];
+      else delete entries[id];
+    }
+    delete entries[lastId];
+    try{localStorage.setItem(storageKey,JSON.stringify(entries));}catch{}
+  }
+  customDecks.splice(removed,1);
+  levels.splice(level,1);
+  sets.splice(level,1);
+  customGroup.replaceChildren(...customDecks.map((entry,index)=>new Option(entry.title,customDeckStart+index)));
+  if(!customDecks.length)customGroup.remove();
+  deckEditor.close();
+  selectSection(0);
+  reset();
+  pickerButton.focus();
+  byId('feedback').textContent='Deck removed.';
+};
 function saveCardChanges(cards,index,message){
   const deck=currentDeck();
   deck.cards.splice(0,deck.cards.length,...cards);
@@ -512,6 +541,10 @@ byId('copy-agent-prompt').onclick=async()=>{
     const field=byId('manual-prompt');
     field.value=prompt;
     byId('manual-prompt-field').hidden=false;
+    const toast=byId('copy-toast');
+    toast.hidden=false;
+    clearTimeout(toast.hideTimer);
+    toast.hideTimer=setTimeout(()=>{toast.hidden=true;},1800);
     try{
       await navigator.clipboard.writeText(prompt);
       reportMaterial('Prompt copied. Paste it into your agent.');
