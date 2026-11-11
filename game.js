@@ -1,5 +1,17 @@
 'use strict';
 const byId = id => document.getElementById(id);
+const musicPanel=byId('music-panel');
+const musicButton=document.createElement('button');
+musicButton.type='button';
+musicButton.textContent='Music';
+musicButton.setAttribute('aria-haspopup','dialog');
+byId('sound').after(musicButton);
+musicButton.onclick=()=>{
+  const player=byId('spotify-player');
+  if(!player.hasAttribute('src'))player.src=player.dataset.src;
+  musicPanel.showModal();
+};
+byId('music-close').onclick=()=>musicPanel.close();
 const levels=demoDecks.map(deck=>[deck.title,deck.title]);
 const random = values => values[Math.floor(Math.random()*values.length)];
 function shuffle(values){

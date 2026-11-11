@@ -427,6 +427,10 @@ button:disabled{opacity:1}
 .rename-deck-form [role=status]:empty{display:none}
 #deck-picker-list button{text-align:left;white-space:normal;background:#2d3446;color:#eee8da;border-color:#515f79;padding:12px 14px;min-height:46px;box-shadow:none}
 #deck-picker-list button:hover{background:#414c66}
+#music-panel{width:min(480px,calc(100% - 28px));max-height:90dvh;background:#242734;color:#efdfbc;border:1px solid #555d70;border-radius:10px;padding:20px}
+#music-panel::backdrop{background:#071217d9}
+#spotify-player{display:block;border:0;border-radius:8px;margin:12px 0}
+#music-panel a{color:#efcf95}
 #deck-picker-list button[aria-pressed=true]{background:#d0ab70;color:#1e2635;border-color:#e8c996;font-weight:750}
 @media(max-width:480px){#deck-picker-open{min-width:0;width:100%;max-width:none}.toolbar-picker{display:flex;align-items:center}.picker-head h2{font-size:2rem}}
 #deck-editor{width:min(1180px,calc(100% - 24px));background:#232735}
