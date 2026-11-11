@@ -320,6 +320,11 @@ button:focus-visible,select:focus-visible{outline:2px solid #edc078;outline-offs
 #material-form label,.editor-fields label{font-size:.8rem;font-weight:650;color:#b8c3b1;letter-spacing:.01em}
 #material-form input,#material-form textarea,#material-form select,.editor-fields input,.editor-fields textarea{background:#181c27;border:1px solid #555d70;border-radius:4px;color:#e8e1cf;padding:10px 12px;font:400 .9rem/1.5 system-ui,sans-serif}
 #material-form textarea:focus,.editor-fields textarea:focus,.editor-fields input:focus{outline:2px solid #bda06b;outline-offset:2px}
+#material-form #pack-file{width:100%;min-width:0;padding:5px;color:#c8c1b0;cursor:pointer}
+#pack-file::file-selector-button{font:inherit;font-weight:650;color:#222f2b;background:#cda365;border:1px solid #e1bd83;border-radius:4px;padding:7px 12px;margin-inline-end:12px;cursor:pointer}
+#pack-file:not(:disabled):hover::file-selector-button{background:#e1bd83}
+#pack-file:focus-visible{outline:2px solid #edc078;outline-offset:2px}
+#pack-file:disabled,#pack-file:disabled::file-selector-button{cursor:wait;opacity:.65}
 #material-form .file-drop{display:flex;position:relative;flex-direction:column;gap:7px;align-items:center;justify-content:center;text-align:center;min-height:150px;padding:20px;border:1px dashed #849176;border-radius:7px;background:#303344;color:#e4d5b2;cursor:pointer}
 .file-drop .upload-symbol{display:none}
 .file-drop strong{font:600 1.2rem Georgia,serif}
