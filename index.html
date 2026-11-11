@@ -68,8 +68,15 @@
   <div id="deck-picker-list"></div>
 </dialog>
 <dialog id="deck-editor" aria-labelledby="edit-deck-title">
+  <h2 id="edit-deck-title">Your deck</h2>
+  <button type="button" id="rename-deck-open" aria-controls="rename-deck-form" aria-expanded="false" title="Rename module"></button>
+  <form id="rename-deck-form" class="rename-deck-form" hidden>
+    <label>Module name <input id="rename-deck-name" maxlength="70" required></label>
+    <button type="submit">Rename module</button>
+    <button type="button" id="rename-deck-cancel">Cancel</button>
+    <p id="rename-deck-status" role="status"></p>
+  </form>
   <form id="edit-deck-form">
-    <h2 id="edit-deck-title">Your deck</h2>
     <select id="edit-card" hidden aria-hidden="true" tabindex="-1"></select>
     <div class="editor-layout">
     <div id="edit-card-grid" class="edit-card-grid" aria-label="Choose a question"></div>
@@ -91,6 +98,7 @@
 <dialog id="material-panel" aria-labelledby="material-title">
   <form id="material-form">
     <h2 id="material-title">Bring your material to the table.</h2>
+    <label>Import a study pack (ZIP, 7z, RAR, TAR) <input type="file" id="pack-file" accept=".zip,.7z,.rar,.tar,.tgz,.tbz,.tbz2,.txz,.gz,.bz2,.xz"></label>
     <label>Deck name <input id="material-name" maxlength="70" placeholder="Example: Biology · Cell structure" required></label>
     <label class="file-drop" id="material-drop"><span class="upload-symbol" aria-hidden="true">↥</span><strong>Drop your material here</strong><span>or click to choose · PDF / TXT / MD</span><input type="file" id="material-file" accept=".pdf,.txt,.md"><span id="material-filename"></span></label>
     <label>Paste or edit your study material <textarea id="material-text" placeholder="Paste notes, term: definition lines, or Q: / A: pairs."></textarea></label>
@@ -151,5 +159,6 @@
 </dialog>
 <script src="vendor/gsap.min.js"></script>
 <script src="materials.js"></script>
+<script src="study-pack.js"></script>
 <script src="demo-decks.js"></script>
 <script src="game.js"></script></body></html>

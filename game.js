@@ -29,7 +29,8 @@ const orderKey='desperate-gpa-order-v1';
 const lastOrders={};
 try{Object.assign(lastOrders,JSON.parse(localStorage.getItem(orderKey))||{});}catch{}
 function makeQuestion(levelIndex,questionIndex){
-  const question=sets[levelIndex][questionIndex];
+  const base=sets[levelIndex][questionIndex];
+  const question=random([base,...(base.variants || [])]);
   return {...question,options:shuffle(question.options)};
 }
 const reactions={
@@ -183,6 +184,19 @@ function missedCard({question,selected,wave,stopped}){
   solution.append('Correct · ',answer);
   reason.append('Why it works · ',makeReason(question.why));
   item.append(label,title,picked,solution,reason);
+  if(question.source){
+    const source=document.createElement('button');
+    source.type='button';
+    source.textContent='Open source · '+question.source.label;
+    source.onclick=async()=>{
+      const tab=window.open('about:blank','_blank');
+      if(!tab){source.textContent='Allow pop-ups to open the source';return;}
+      tab.opener=null;
+      try{await TuzPacks.open(question.source,tab);}
+      catch(error){tab.close();source.textContent=error.message;}
+    };
+    item.append(source);
+  }
   return item;
 }
 let records={};
@@ -225,19 +239,49 @@ document.querySelector('label[for="level"]').htmlFor='deck-picker-open';
 function renderDeckPicker(){
   const query=byId('deck-search').value.trim().toLowerCase();
   const list=byId('deck-picker-list');list.replaceChildren();
-  const groups=[customGroup,demoGroup];
-  for(const group of groups){
-    const options=[...group.children].filter(option=>option.textContent.toLowerCase().includes(query));
-    if(!options.length)continue;
-    const heading=document.createElement('h3');heading.textContent=group.label;list.append(heading);
+  const groups=new Map();
+  const folders=new Map();
+  for(const option of [...customGroup.children,...demoGroup.children]){
+    const deck=customDecks[Number(option.value)-customDeckStart];
+    const folderName=deck?.pack==='EECS 220 Exam 2'?'eecs220_exam2':deck?.pack;
+    const name=folderName?deck.chapter:option.parentElement.label;
+    if(![folderName,deck?.pack,name,option.textContent].join(' ').toLowerCase().includes(query))continue;
+    let destination=groups;
+    if(folderName){
+      if(!folders.has(folderName))folders.set(folderName,new Map());
+      destination=folders.get(folderName);
+    }
+    if(!destination.has(name))destination.set(name,[]);
+    destination.get(name).push(option);
+  }
+  function renderGroup(container,name,options){
+    const heading=document.createElement('h3');heading.textContent=name;container.append(heading);
     for(const option of options){
       const button=document.createElement('button');
       button.type='button';button.textContent=option.textContent;
       button.setAttribute('aria-pressed',String(Number(option.value)===level));
       button.onclick=()=>{selectSection(Number(option.value));reset();deckPicker.close();};
-      list.append(button);
+      container.append(button);
     }
   }
+  if(folders.size){
+    const heading=document.createElement('h3');
+    heading.textContent='Imported study decks';
+    list.append(heading);
+  }
+  for(const [name,chapters] of folders){
+    const folder=document.createElement('details');
+    folder.className='deck-folder';
+    folder.open=Boolean(query);
+    const summary=document.createElement('summary');
+    summary.textContent=name;
+    const content=document.createElement('div');
+    content.className='deck-folder-content';
+    for(const [chapter,options] of chapters)renderGroup(content,chapter,options);
+    folder.append(summary,content);
+    list.append(folder);
+  }
+  for(const [name,options] of groups)renderGroup(list,name,options);
   if(!list.children.length)list.textContent='No matching decks.';
 }
 pickerButton.onclick=()=>{byId('deck-search').value='';renderDeckPicker();deckPicker.showModal();byId('deck-search').focus();};
@@ -309,9 +353,52 @@ function navigateCard(index){
 }
 editButton.onclick=()=>{
   editStatus.textContent='';
+  closeRename();
   byId('edit-card-grid').scrollTop=0;
   showCard(0);
   deckEditor.showModal();
+};
+function closeRename(){
+  const trigger=byId('rename-deck-open');
+  trigger.textContent=currentDeck().title;
+  trigger.setAttribute('aria-expanded','false');
+  byId('rename-deck-form').hidden=true;
+}
+byId('rename-deck-open').onclick=()=>{
+  const trigger=byId('rename-deck-open');
+  if(!byId('rename-deck-form').hidden){closeRename();return;}
+  trigger.setAttribute('aria-expanded','true');
+  const input=byId('rename-deck-name');
+  input.value=currentDeck().title;
+  byId('rename-deck-status').textContent='';
+  byId('rename-deck-form').hidden=false;
+  input.focus();
+  input.select();
+};
+byId('rename-deck-cancel').onclick=()=>{
+  closeRename();
+  byId('rename-deck-open').focus();
+};
+byId('rename-deck-form').onsubmit=event=>{
+  event.preventDefault();
+  const input=byId('rename-deck-name');
+  const status=byId('rename-deck-status');
+  const title=input.value.trim();
+  if(!title){status.textContent='Enter a module name.';return;}
+  const deck=currentDeck();
+  const renamed={...deck,title};
+  if(!TuzMaterials.save(customDecks.map(entry=>entry===deck?renamed:entry))){
+    status.textContent='Could not save the name in this browser.';
+    return;
+  }
+  deck.title=title;
+  levels[level]=[title,'Your material · '+title];
+  customGroup.children[level-customDeckStart].textContent=title;
+  selectSection(level);
+  paint();
+  closeRename();
+  byId('rename-deck-open').focus();
+  editStatus.textContent='Module renamed.';
 };
 byId('edit-prev').onclick=()=>navigateCard(Number(editCard.value)-1);
 byId('edit-next').onclick=()=>navigateCard(Number(editCard.value)+1);
@@ -370,6 +457,7 @@ byId('edit-deck-form').onsubmit=event=>{
   const rows=[...byId('edit-choices').children];
   const options=rows.map(row=>row.querySelector('input[type=text]').value.trim());
   const selected=rows.findIndex(row=>row.firstElementChild.checked);
+  const previous=cards[index];
   cards[index]={
     prompt:byId('edit-prompt').value,options,
     answer:options[selected],why:byId('edit-why').value
@@ -377,7 +465,10 @@ byId('edit-deck-form').onsubmit=event=>{
   try{
     const validated=TuzMaterials.fromAgent(currentDeck().title,{cards});
     if(validated.cards.length!==cards.length)throw new Error('Use a unique prompt, four distinct choices, and an answer that matches one choice.');
-    saveCardChanges(validated.cards,index,'Question saved.');
+    const updated=validated.cards[index];
+    if(previous.source)updated.source=previous.source;
+    cards[index]=updated;
+    saveCardChanges(cards,index,'Question saved.');
   }catch(error){editStatus.textContent=error.message;}
 };
 const materialForm=byId('material-form');
@@ -600,6 +691,33 @@ byId('add-material').onclick=()=>{
   materialPanel.showModal();
 };
 byId('material-close').onclick=()=>materialPanel.close();
+byId('pack-file').onchange=async event=>{
+  const file=event.target.files[0];
+  event.target.value='';
+  if(!file || materialBuild.disabled)return;
+  materialBuild.disabled=true;
+  event.target.disabled=true;
+  reportMaterial('Importing '+file.name+'…');
+  try{
+    const decks=await TuzPacks.read(file,TuzMaterials.maxDecks-customDecks.length,customDecks);
+    if(!TuzMaterials.save([...customDecks,...decks]))throw new Error('Could not save decks in this browser.');
+    const first=levels.length;
+    if(!customGroup.isConnected)byId('level').append(customGroup);
+    for(const deck of decks){
+      customDecks.push(deck);
+      customGroup.append(new Option(deck.title,registerDeck(deck)));
+    }
+    selectSection(first);
+    reset();
+    byId('feedback').textContent=decks.length+' study modules imported.';
+    materialPanel.close();
+  }catch(error){
+    reportMaterial(error.message||'Could not import this study pack.',true);
+  }finally{
+    materialBuild.disabled=false;
+    event.target.disabled=false;
+  }
+};
 materialPanel.addEventListener('close',()=>{
   importVersion++;
   agentRequest?.abort();

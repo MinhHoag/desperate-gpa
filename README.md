@@ -27,6 +27,14 @@ Select **Add material** and upload a text-based PDF, TXT, or Markdown file, or p
 
 ![Deck builder showing file upload, pasted notes, and the local and AI options](assets/deck-builder.png)
 
+## Share a study pack
+
+Send your friends the ZIP file. They can open the game, choose **Add material → Import a study pack**, and select the file. The deck picker groups the imported modules by chapter. Questions with variants can change between runs, and **Open source** in missed question review opens the included PDF to the referenced page.
+
+ZIP imports work from `index.html`. To import a 7z, RAR, TAR, or compressed TAR archive, run `npm start` and open the game from the local server. Keep the same folder structure when repacking. Each pack has a top-level folder containing `manifest.json`, `deck/` for the chapter modules, and `material/` for the source PDFs.
+
+Study packs include their source PDFs. Share packs privately when they contain course materials, and check that you have permission to share the files.
+
 ## Edit your deck
 
 Use **Edit deck** to revise questions, answer choices, and explanations before playing. The game stores decks, scores, and connection settings in your browser. API keys stay in memory until you reload or close the tab.
@@ -36,3 +44,5 @@ Use **Edit deck** to revise questions, answer choices, and explanations before p
 ## Third-party assets
 
 The `vendor/` folder includes PDF.js, GSAP, and Instrument Serif. The PDF.js and font licenses are included alongside the files. GSAP’s notice is in its bundle. [GSAP license](https://gsap.com/standard-license/)
+
+The local archive importer bundles libarchive.js 2.0.2 with its license. The bundled JavaScript rejects unsafe archive path components.

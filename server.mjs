@@ -10,9 +10,9 @@ if (!Number.isInteger(port) || port < 1 || port > 65535) {
 }
 const origin = 'http://'+host+':'+port;
 const root = new URL('./', import.meta.url);
-const staticPaths = /^\/(?:index\.html|styles\.css|(?:game|materials|demo-decks)\.js|vendor\/(?:pdf-text|gsap\.min)\.js|vendor\/InstrumentSerif-Regular\.ttf|assets\/Tuz_(?:Still|Boss|Hit|Miss)\.png|assets\/Tuz_Idle\.gif)$/;
+const staticPaths = /^\/(?:index\.html|styles\.css|(?:game|materials|demo-decks|study-pack)\.js|vendor\/(?:pdf-text|gsap\.min)\.js|vendor\/archive\/(?:libarchive\.js|worker-bundle\.js|libarchive\.wasm)|vendor\/InstrumentSerif-Regular\.ttf|assets\/Tuz_(?:Still|Boss|Hit|Miss)\.png|assets\/Tuz_Idle\.gif)$/;
 const mime = {html:'text/html; charset=utf-8', css:'text/css; charset=utf-8',
-  js:'text/javascript; charset=utf-8', png:'image/png', gif:'image/gif', ttf:'font/ttf'};
+  js:'text/javascript; charset=utf-8', wasm:'application/wasm', png:'image/png', gif:'image/gif', ttf:'font/ttf'};
 
 function reply(res, status, data) {
   res.writeHead(status, {'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});

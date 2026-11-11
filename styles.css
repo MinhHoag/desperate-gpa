@@ -411,6 +411,15 @@ button:disabled{opacity:1}
 #deck-search{width:100%;font:inherit;color:#f4ead6;background:#171d29;border:1px solid #69738a;border-radius:5px;padding:12px}
 #deck-picker-list{max-height:51dvh;overflow:auto;margin-top:18px;display:grid;gap:7px;padding:2px 5px 8px 2px}
 #deck-picker-list h3{font-size:.8rem;letter-spacing:.08em;color:#c3b38f;margin:14px 0 5px}
+.deck-folder{border:1px solid #515f79;border-radius:8px;background:#252b39}
+.deck-folder summary{cursor:pointer;padding:12px 14px;color:#eee8da}
+.deck-folder-content{display:grid;gap:7px;padding:0 12px 12px}
+.rename-deck-form{display:flex;flex-wrap:wrap;align-items:end;gap:8px;margin-bottom:12px}
+.rename-deck-form[hidden]{display:none}
+#rename-deck-open{margin-bottom:12px;text-align:left}
+.rename-deck-form label{flex:1;min-width:180px}
+.rename-deck-form [role=status]{flex-basis:100%;margin:0}
+.rename-deck-form [role=status]:empty{display:none}
 #deck-picker-list button{text-align:left;white-space:normal;background:#2d3446;color:#eee8da;border-color:#515f79;padding:12px 14px;min-height:46px;box-shadow:none}
 #deck-picker-list button:hover{background:#414c66}
 #deck-picker-list button[aria-pressed=true]{background:#d0ab70;color:#1e2635;border-color:#e8c996;font-weight:750}
