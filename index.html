@@ -103,7 +103,47 @@
 <dialog id="material-panel" aria-labelledby="material-title">
   <form id="material-form">
     <h2 id="material-title">Bring your material to the table.</h2>
-    <label>Import a study pack (ZIP, 7z, RAR, TAR) <input type="file" id="pack-file" accept=".zip,.7z,.rar,.tar,.tgz,.tbz,.tbz2,.txz,.gz,.bz2,.xz"></label>
+    <div class="pack-tools">
+      <label>Import a study pack (ZIP, 7z, RAR, TAR) <input type="file" id="pack-file" accept=".zip,.7z,.rar,.tar,.tgz,.tbz,.tbz2,.txz,.gz,.bz2,.xz"></label>
+      <button type="button" id="pack-prompt-toggle" aria-expanded="false" aria-controls="pack-prompt-panel">Make a study pack with AI</button>
+    </div>
+    <div id="pack-prompt-panel" hidden>
+      <p>Upload your PDFs to your AI chat, paste this prompt, then import the ZIP it creates.</p>
+      <button type="button" id="pack-prompt-copy">Copy prompt</button>
+      <span id="pack-prompt-status" role="status"></span>
+      <details id="pack-prompt-preview">
+        <summary>View prompt</summary>
+        <textarea id="pack-prompt-text" aria-label="AI study pack prompt" readonly rows="8">REQUIRED FINAL DELIVERABLE: Attach one real, downloadable .zip file that I can select in Desperate GPA under Add material → Import a study pack.
+
+Use file creation and archive tools now. Complete the entire pack in this response without stopping after an outline, a study guide, or a preview. The study guide is an intermediate file inside the ZIP. A Canvas, HTML preview, PDF link, or a code block containing JSON does not complete the task. If you already made a guide in this conversation, reuse it and finish the ZIP. If you cannot create and attach a ZIP in this chat, say so up front.
+
+Course and exam: [optional]
+Scope or priorities: [optional]
+
+1. Read the files, including diagrams, examples, homework, and practice exams. Render or OCR scanned pages if possible. Use the syllabus or exam outline to determine scope. If scope is blank, infer it and report your assumption. Flag missing or unreadable pages. Group by course/exam, chapter, and module in study order. Each module should teach a distinct skill. Match the level and format of the supplied practice exam with fresh questions.
+
+2. Write an actual PDF file named Study Guide.pdf and save it in material/ alongside the relevant original PDFs. If you draft the guide as HTML, render it to PDF before packaging. Start each module on a new page. Add a clickable contents page, plain-English definitions before formulas, a useful diagram or table where appropriate, a fully worked example with steps and units, and a common mistake with a quick check. End each module with “Read next” using the exact original PDF filename and page number, and “Practice next” using the exact chapter and module names shown in the game. Count PDF pages from 1. Continue directly to the question files and ZIP.
+
+3. Write 5–12 question families per module. Give each base question exactly four distinct choices, one unambiguous answer, and a short explanation that teaches the method. Give most families 1–3 variants. Change the numbers, setup, what is asked, or a condition while preserving the skill. Recalculate every variant's answer and distractors. Mix conceptual and exam-style questions. Link each question to a verified page in an included original PDF or the study guide so missed-question review opens the right explanation.
+
+4. Create a standard ZIP with one top-level folder named for the pack. Inside it put manifest.json, deck/, and material/. Place all PDFs directly under material/. Place questions.json, variants.json, and references.json under deck/Chapter Name/Module Name/ for each module.
+
+manifest.json example:
+{"format":"tuz-study-pack-v1","title":"Pack Name","chapters":[{"title":"Chapter 5","modules":[{"title":"Module Name","path":"deck/Chapter 5/Module Name"}]}],"files":[{"id":"guide","name":"Study Guide.pdf"},{"id":"source-1","name":"Original Source.pdf"}]}
+
+questions.json is {"cards":[...]} with cards like:
+{"prompt":"Question text","options":["A","B","C","D"],"answer":"B","why":"Explain the reasoning."}
+
+variants.json is an array aligned with cards. Each entry is an array of variant cards using the same fields, or [] when there are no variants. A variant can include its own "source" reference if its page differs from the base card.
+
+references.json is an array aligned with cards, with one reference per card:
+[{"file":"guide","page":3,"label":"Study Guide · Worked example, PDF p. 3"}]
+
+Every reference file must match a manifest file ID. Page must be a positive integer within the included PDF. Every answer must exactly match one option.
+
+5. Create the ZIP, then reopen it to verify the actual contents. Check that it contains the manifest, all three JSON files per module, the generated Study Guide.pdf, and every referenced source PDF. Validate answer keys, module paths, and PDF page references. Keep both the ZIP and its unpacked contents under 80 MB and use at most 20 modules. If needed, include PDF excerpts and update all page references to match. Attach the ZIP first, followed by the chapter, module, and base question counts plus any gaps you could not verify. A link to the study guide alone is insufficient.</textarea>
+      </details>
+    </div>
     <label>Deck name <input id="material-name" maxlength="70" placeholder="Example: Biology · Cell structure" required></label>
     <label class="file-drop" id="material-drop"><span class="upload-symbol" aria-hidden="true">↥</span><strong>Drop your material here</strong><span>or click to choose · PDF / TXT / MD</span><input type="file" id="material-file" accept=".pdf,.txt,.md"><span id="material-filename"></span></label>
     <label>Paste or edit your study material <textarea id="material-text" placeholder="Paste notes, term: definition lines, or Q: / A: pairs."></textarea></label>

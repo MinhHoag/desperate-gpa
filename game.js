@@ -300,6 +300,25 @@ pickerButton.onclick=()=>{byId('deck-search').value='';renderDeckPicker();deckPi
 byId('deck-search').oninput=renderDeckPicker;
 byId('picker-close').onclick=()=>deckPicker.close();
 const materialPanel=byId('material-panel');
+const packPromptToggle=byId('pack-prompt-toggle');
+const packPromptPanel=byId('pack-prompt-panel');
+packPromptToggle.onclick=()=>{
+  packPromptPanel.hidden=!packPromptPanel.hidden;
+  packPromptToggle.setAttribute('aria-expanded',String(!packPromptPanel.hidden));
+};
+byId('pack-prompt-copy').onclick=async()=>{
+  const prompt=byId('pack-prompt-text');
+  const status=byId('pack-prompt-status');
+  try{
+    await navigator.clipboard.writeText(prompt.value);
+    status.textContent='Copied';
+  }catch{
+    byId('pack-prompt-preview').open=true;
+    prompt.focus();
+    prompt.select();
+    status.textContent='Press Ctrl+C or Command+C to copy.';
+  }
+};
 const deckEditor=byId('deck-editor');
 const editButton=document.createElement('button');
 editButton.type='button';
@@ -1046,9 +1065,16 @@ function advance(){
   if(shields===0||index===round.length-1){finish();return;}
   index++;launch();
 }
+function nextStudyModule(){
+  const pack=currentDeck()?.pack;
+  if(!pack)return -1;
+  const next=customDecks.findIndex((deck,index)=>index>level-customDeckStart&&deck.pack===pack);
+  return next<0?-1:customDeckStart+next;
+}
 function finish(stopped=false){
   clearTimeout(transition);
   const cleared=!stopped&&shields>0;
+  const packFinished=cleared&&Boolean(currentDeck()?.pack)&&nextStudyModule()<0;
   state='done';
   byId('next-wave').hidden=true;
   const runPoints=score-runStartScore;
@@ -1060,10 +1086,11 @@ function finish(stopped=false){
   byId('targets').replaceChildren();
   const runSummary='+'+runPoints.toLocaleString()+' this run · '+correct+' / 5 hits';
   byId('feedback').textContent=(newBest?'New personal best! ':'')+runSummary;
+  if(packFinished)byId('feedback').append(' · Last module cleared');
   react(cleared?'clear':'retry');
   playEffect(newBest?'record':cleared?'clear':'fail');
   byId('result-title').textContent=runSummary;
-  byId('result-detail').textContent='Total '+score.toLocaleString()+' points. '+(cleared?'Next run carries your score and chain forward. Retry starts fresh.':'Retry starts fresh with three shields.');
+  byId('result-detail').textContent='Total '+score.toLocaleString()+' points. '+(cleared&&!packFinished?'Next run carries your score and chain forward. Retry starts fresh.':'Retry starts fresh with three shields.');
   byId('review').replaceChildren(...misses.map(missedCard));
   byId('review-heading').hidden=!misses.length;
   const showReview=misses.length>0;
@@ -1071,9 +1098,9 @@ function finish(stopped=false){
   document.body.classList.toggle('review-open',showReview);
   byId('start').hidden=false;byId('start').textContent='Retry run';
   const next=byId('next-level');
-  next.hidden=!cleared;
+  next.hidden=!cleared||packFinished;
   next.textContent='Next run →';
-  paint();(cleared?next:byId('start')).focus();
+  paint();(next.hidden?byId('start'):next).focus();
 }
 function draw(time){
   moveTuz(time);
@@ -1104,7 +1131,12 @@ byId('level').onchange=()=>{selectSection(Number(byId('level').value));reset();}
 byId('start').onclick=()=>start();
 byId('stop-run').onclick=stop;
 byId('next-wave').onclick=advance;
-byId('next-level').onclick=()=>start(true);
+byId('next-level').onclick=()=>{
+  if(state!=='done'||byId('next-level').hidden)return;
+  const next=nextStudyModule();
+  if(next>=0)selectSection(next);
+  start(true);
+};
 const motionKey='desperate-gpa-gentle-v1';
 let gentle=false;
 try{gentle=localStorage.getItem(motionKey)==='on';}catch{}
