@@ -170,5 +170,9 @@ const TuzPacks = (() => {
     setTimeout(() => URL.revokeObjectURL(url), 300000);
   }
 
-  return {read, open};
+  function removeSources(pack) {
+    return files('readwrite',store=>store.delete(IDBKeyRange.bound([pack],[pack,[]])));
+  }
+
+  return {read, open, removeSources};
 })();

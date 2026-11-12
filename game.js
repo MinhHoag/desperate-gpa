@@ -1,5 +1,19 @@
 'use strict';
 const byId = id => document.getElementById(id);
+function confirmAction(title,message,action,subject=''){
+  const dialog=byId('confirm-panel');
+  if(dialog.open)return Promise.resolve(false);
+  byId('confirm-title').textContent=title;
+  byId('confirm-subject').textContent=subject;
+  byId('confirm-subject').hidden=!subject;
+  byId('confirm-message').textContent=message;
+  byId('confirm-action').textContent=action;
+  dialog.returnValue='';
+  return new Promise(resolve=>{
+    dialog.addEventListener('close',()=>resolve(dialog.returnValue==='confirm'),{once:true});
+    dialog.showModal();
+  });
+}
 const musicPanel=byId('music-panel');
 const musicButton=document.createElement('button');
 musicButton.type='button';
@@ -282,6 +296,8 @@ function renderDeckPicker(){
     list.append(heading);
   }
   for(const [name,chapters] of folders){
+    const row=document.createElement('div');
+    row.className='deck-folder-row';
     const folder=document.createElement('details');
     folder.className='deck-folder';
     folder.open=Boolean(query);
@@ -290,13 +306,35 @@ function renderDeckPicker(){
     const content=document.createElement('div');
     content.className='deck-folder-content';
     for(const [chapter,options] of chapters)renderGroup(content,chapter,options);
+    const pack=customDecks[Number(chapters.values().next().value[0].value)-customDeckStart].pack;
+    const remove=document.createElement('button');
+    remove.type='button';
+    remove.className='delete-study-pack';
+    remove.textContent='Delete';
+    remove.setAttribute('aria-label','Delete study pack '+name);
+    remove.onclick=async()=>{
+      if(!await confirmAction('Delete study pack?','This removes its modules, scores, and saved PDFs from this browser.','Delete pack',name))return;
+      if(!removeDecks(deck=>deck.pack===pack)){
+        byId('deck-picker-status').textContent='Could not delete the pack. Browser storage is unavailable.';
+        return;
+      }
+      renderDeckPicker();
+      byId('deck-search').focus();
+      byId('deck-picker-status').textContent='Clearing saved PDFs…';
+      try{
+        await TuzPacks.removeSources(pack);
+        byId('deck-picker-status').textContent=name+' deleted.';
+      }
+      catch{byId('deck-picker-status').textContent=name+' deleted. Its PDF cache could not be cleared.';}
+    };
     folder.append(summary,content);
-    list.append(folder);
+    row.append(folder,remove);
+    list.append(row);
   }
   for(const [name,options] of groups)renderGroup(list,name,options);
   if(!list.children.length)list.textContent='No matching decks.';
 }
-pickerButton.onclick=()=>{byId('deck-search').value='';renderDeckPicker();deckPicker.showModal();byId('deck-search').focus();};
+pickerButton.onclick=()=>{byId('deck-search').value='';byId('deck-picker-status').textContent='';renderDeckPicker();deckPicker.showModal();byId('deck-search').focus();};
 byId('deck-search').oninput=renderDeckPicker;
 byId('picker-close').onclick=()=>deckPicker.close();
 const materialPanel=byId('material-panel');
@@ -376,9 +414,9 @@ function showCard(index){
   byId('edit-remove').disabled=cards.length<=5;
   byId('edit-deck-form').dataset.dirty='false';
 }
-function navigateCard(index){
+async function navigateCard(index){
   if(index===Number(editCard.value))return;
-  if(byId('edit-deck-form').dataset.dirty==='true' && !window.confirm('Discard unsaved edits to this question?'))return;
+  if(!await canCloseEditor())return;
   showCard(index);
   editStatus.textContent='';
 }
@@ -435,36 +473,45 @@ byId('edit-prev').onclick=()=>navigateCard(Number(editCard.value)-1);
 byId('edit-next').onclick=()=>navigateCard(Number(editCard.value)+1);
 byId('edit-deck-form').oninput=event=>{event.currentTarget.dataset.dirty='true';};
 function canCloseEditor(){
-  return byId('edit-deck-form').dataset.dirty!=='true'||window.confirm('Discard unsaved edits to this question?');
+  return byId('edit-deck-form').dataset.dirty!=='true'||confirmAction('Discard edits?','Your unsaved changes to this question will be lost.','Discard edits');
 }
-byId('edit-close').onclick=()=>{if(canCloseEditor())deckEditor.close();};
-deckEditor.addEventListener('cancel',event=>{if(!canCloseEditor())event.preventDefault();});
-byId('delete-deck').onclick=()=>{
+async function closeEditor(){
+  if(await canCloseEditor())deckEditor.close();
+}
+byId('edit-close').onclick=closeEditor;
+deckEditor.addEventListener('cancel',event=>{event.preventDefault();void closeEditor();});
+function removeDecks(shouldRemove){
+  const active=currentDeck();
+  const remaining=customDecks.filter(deck=>!shouldRemove(deck));
+  if(!TuzMaterials.save(remaining))return false;
+  for(const [entries,storageKey] of [[records,key],[lastOrders,orderKey]]){
+    const previous=customDecks.map((_,index)=>entries[index+1]);
+    customDecks.forEach((_,index)=>delete entries[index+1]);
+    remaining.forEach((deck,index)=>{
+      const value=previous[customDecks.indexOf(deck)];
+      if(value!==undefined)entries[index+1]=value;
+    });
+    try{localStorage.setItem(storageKey,JSON.stringify(entries));}catch{}
+  }
+  customDecks.splice(0,customDecks.length,...remaining);
+  levels.length=customDeckStart;
+  sets.length=customDeckStart;
+  customDecks.forEach(registerDeck);
+  customGroup.replaceChildren(...customDecks.map((entry,index)=>new Option(entry.title,customDeckStart+index)));
+  if(!customDecks.length)customGroup.remove();
+  const activeIndex=remaining.indexOf(active);
+  selectSection(active ? activeIndex<0 ? 0 : customDeckStart+activeIndex : level);
+  if(active&&activeIndex<0)reset();
+  return true;
+}
+byId('delete-deck').onclick=async()=>{
   const deck=currentDeck();
-  if(!deck||!window.confirm('Remove “'+deck.title+'” and its best score?'))return;
-  const removed=level-customDeckStart;
-  const remaining=customDecks.filter((_,index)=>index!==removed);
-  if(!TuzMaterials.save(remaining)){
+  if(!deck||!await confirmAction('Remove deck?','“'+deck.title+'” and its best score will be removed from this browser.','Remove deck'))return;
+  if(!removeDecks(entry=>entry===deck)){
     editStatus.textContent='Could not remove the deck. Browser storage is unavailable.';
     return;
   }
-  const lastId=customDecks.length;
-  for(const [entries,storageKey] of [[records,key],[lastOrders,orderKey]]){
-    for(let id=removed+1;id<lastId;id++){
-      if(Object.hasOwn(entries,id+1))entries[id]=entries[id+1];
-      else delete entries[id];
-    }
-    delete entries[lastId];
-    try{localStorage.setItem(storageKey,JSON.stringify(entries));}catch{}
-  }
-  customDecks.splice(removed,1);
-  levels.splice(level,1);
-  sets.splice(level,1);
-  customGroup.replaceChildren(...customDecks.map((entry,index)=>new Option(entry.title,customDeckStart+index)));
-  if(!customDecks.length)customGroup.remove();
   deckEditor.close();
-  selectSection(0);
-  reset();
   pickerButton.focus();
   byId('feedback').textContent='Deck removed.';
 };

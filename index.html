@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body><main>
-<header class="arcade-head"><div><h1>Your GPA Must Be Desperate</h1><p>Upload your notes. Let your agent build the deck. Chain your combos.</p></div></header>
+<header class="arcade-head"><div><h1>Your GPA Must Be Desperate</h1><p>Upload your notes. Let your agent build the deck. Give your GPA some therapy.</p></div></header>
 <div class="row toolbar"><div class="toolbar-picker"><label for="level">Deck</label><select class="section" id="level"></select></div><div class="toolbar-controls"><button type="button" id="add-material" aria-haspopup="dialog">Add material</button><button type="button" id="option-motion" aria-pressed="false">Gentler options</button><button type="button" id="sound" aria-pressed="true">SFX on</button><button type="button" id="configure-ai" aria-haspopup="dialog">Configure AI</button><button type="button" id="stop-run" hidden title="End this run (Esc)">Stop run</button></div></div>
 <div class="hud">
 <div class="stat"><span class="label">Wave</span><span id="wave-count" class="stat-value">0 / 5</span></div>
@@ -70,7 +70,19 @@
   <div class="picker-head"><h2 id="deck-picker-title">Choose your deck</h2><button type="button" id="picker-close">Close</button></div>
   <label for="deck-search">Find a deck</label>
   <input id="deck-search" type="search" placeholder="Search decks…" autocomplete="off">
+  <p id="deck-picker-status" role="status"></p>
   <div id="deck-picker-list"></div>
+</dialog>
+<dialog id="confirm-panel" aria-labelledby="confirm-title" aria-describedby="confirm-message">
+  <form method="dialog">
+    <h2 id="confirm-title"></h2>
+    <p id="confirm-subject" hidden></p>
+    <p id="confirm-message"></p>
+    <div class="confirm-actions">
+      <button value="cancel" autofocus>Cancel</button>
+      <button value="confirm" id="confirm-action"></button>
+    </div>
+  </form>
 </dialog>
 <dialog id="deck-editor" aria-labelledby="edit-deck-title">
   <h2 id="edit-deck-title">Your deck</h2>

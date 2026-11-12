@@ -428,6 +428,22 @@ button:disabled{opacity:1}
 .deck-folder{border:1px solid #515f79;border-radius:8px;background:#252b39}
 .deck-folder summary{cursor:pointer;padding:12px 14px;color:#eee8da}
 .deck-folder-content{display:grid;gap:7px;padding:0 12px 12px}
+.deck-folder-row{position:relative;min-width:0}
+.deck-folder-row summary{padding-inline-end:86px;overflow-wrap:anywhere;min-height:46px}
+#deck-picker-list .delete-study-pack{position:absolute;inset:5px 7px auto auto;min-height:36px;padding:5px 10px;background:#382a35;color:#ffd0cc;border-color:#805461}
+#deck-picker-list .delete-study-pack:hover{background:#513442}
+#confirm-panel{width:min(460px,calc(100% - 32px));margin:auto;background:#242734;color:#eee8da;border:1px solid #62697a;border-radius:14px;padding:clamp(20px,5vw,30px);box-shadow:0 18px 55px #080b16a6}
+#confirm-panel::backdrop{background:#10131ac4;backdrop-filter:blur(2px)}
+#confirm-title{font:400 2.15rem/1.05 'Instrument Serif',Georgia,serif;color:#efdfbc;margin:0}
+#confirm-subject{margin:16px 0 0;font-weight:650;overflow-wrap:anywhere}
+#confirm-message{margin:8px 0 22px;color:#c9c6d2;line-height:1.5}
+.confirm-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:10px;border-top:1px solid #484d60;padding-top:16px}
+.confirm-actions button{min-height:44px;box-shadow:none}
+.confirm-actions button[value=cancel]{background:transparent;color:#eee8da;border-color:#62697a}
+#confirm-action{background:#a14957;color:#fff6f4;border-color:#c46e78}
+#confirm-action:hover{background:#ae5361}
+#deck-picker-status{margin:10px 0 0;padding:8px 12px;background:#272e3e;border:1px solid #505c74;border-radius:6px;color:#e4dece;font-size:.85rem;overflow-wrap:anywhere}
+#deck-picker-status:empty{display:none}
 .rename-deck-form{display:flex;flex-wrap:wrap;align-items:end;gap:8px;margin-bottom:12px}
 .rename-deck-form[hidden]{display:none}
 #rename-deck-open{margin-bottom:12px;text-align:left}
